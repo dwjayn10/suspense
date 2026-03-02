@@ -3,252 +3,189 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>suspense</title>
+<title>Birthday Surprise</title>
 
 <style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family: "Segoe UI", sans-serif;
-}
-body{
-    height:100vh;
-    background:url("bg.jpg") center/cover no-repeat;
-    overflow:hidden;
-}
-.screen{
-    position:absolute;
-    inset:0;
-    display:none;
-    align-items:center;
-    justify-content:center;
-    backdrop-filter: blur(1px);
-}
-.active{ display:flex; }
-
-.card{
-    background:rgba(0,0,0,0.55);
-    color:white;
-    padding:25px;
-    border-radius:18px;
-    text-align:center;
-    width:90%;
-    max-width:420px;
-    animation: pop 0.8s ease;
-}
-@keyframes pop{
-    from{ transform:scale(0.7); opacity:0; }
-    to{ transform:scale(1); opacity:1; }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
 }
 
-button{
-    margin-top:18px;
-    padding:12px 22px;
-    border:none;
-    border-radius:25px;
-    background:#ffb703;
-    font-size:16px;
-    cursor:pointer;
-}
-button:hover{ transform:scale(1.05); }
-
-.numbers{
-    display:flex;
-    justify-content:space-around;
-    margin-top:20px;
-}
-.num{
-    width:60px;
-    height:60px;
-    background:#ffb703;
-    color:black;
-    border-radius:50%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:20px;
-    cursor:pointer;
+body {
+    height: 100vh;
+    background: url('bg.jpg') no-repeat center center/cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
 }
 
-#cakeArea{
-    position:relative;
-    width:100%;
-    height:100%;
-}
-#cake{
-    position:absolute;
-    width:220px;
-    left:50%;
-    bottom:120px;
-    transform:translateX(-50%);
-}
-#knife{
-    position:absolute;
-    width:120px;
-    left:50%;
-    top:80px;
-    transform:translateX(-50%);
-    touch-action:none;
-    cursor:grab;
+/* Dark cinematic overlay */
+.overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.65);
 }
 
-.crumb{
-    position:absolute;
-    width:6px;
-    height:6px;
-    background:#f5d6a1;
-    border-radius:50%;
-    animation: crumbFall 700ms ease-out forwards;
-}
-@keyframes crumbFall{
-    to{
-        opacity:0;
-        transform:translate(var(--x),var(--y)) scale(0.3);
-    }
+/* Container */
+.container {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    color: white;
 }
 
-.confetti{
-    position:fixed;
-    width:8px;
-    height:8px;
-    background:hsl(var(--h),80%,60%);
-    animation: fall 1.2s linear forwards;
+/* Title */
+h1 {
+    margin-bottom: 20px;
+    font-weight: 500;
+    letter-spacing: 2px;
 }
-@keyframes fall{
-    to{
-        transform:translateY(100vh) rotate(360deg);
-        opacity:0;
-    }
+
+/* Number buttons */
+.number-btn {
+    padding: 15px 28px;
+    margin: 10px;
+    font-size: 22px;
+    border: none;
+    border-radius: 12px;
+    background: white;
+    color: black;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.number-btn:hover {
+    transform: scale(1.1);
+    background: #ffccd5;
+}
+
+/* Shake animation for wrong choice */
+.shake {
+    animation: shake 0.4s;
+}
+
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-8px); }
+    50% { transform: translateX(8px); }
+    75% { transform: translateX(-8px); }
+    100% { transform: translateX(0); }
+}
+
+/* Fade animations */
+.fade-out {
+    animation: fadeOut 1s forwards;
+}
+
+@keyframes fadeOut {
+    to { opacity: 0; visibility: hidden; }
+}
+
+.fade-in {
+    animation: fadeIn 1.5s forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Video Section */
+#videoContainer {
+    display: none;
+}
+
+video {
+    width: 85vw;
+    max-width: 750px;
+    border-radius: 18px;
+    box-shadow: 0 0 25px rgba(255,255,255,0.2);
+}
+
+/* Replay Button */
+#replayBtn {
+    margin-top: 20px;
+    padding: 12px 25px;
+    font-size: 18px;
+    border: none;
+    border-radius: 10px;
+    background: white;
+    color: black;
+    cursor: pointer;
+    display: none;
+    transition: 0.3s ease;
+}
+
+#replayBtn:hover {
+    background: #ffccd5;
+    transform: scale(1.05);
 }
 </style>
 </head>
 
 <body>
 
-<!-- Screen 1 -->
-<div class="screen active" id="s1">
-<div class="card">
-<h2>Hey Beautifullll</h2>
-<p style="margin-top:10px">Let's make ur special day more special with this little moment!<br>Chal cake kapuyaa</p>
-<button onclick="go('s2')">Continue</button>
-</div>
+<div class="overlay"></div>
+
+<!-- Number Game -->
+<div class="container" id="numberGame">
+    <h1>Pick a Number</h1>
+    <button class="number-btn" onclick="checkNumber(10)">10</button>
+    <button class="number-btn" onclick="checkNumber(16)">16</button>
+    <button class="number-btn" onclick="checkNumber(22)">22</button>
 </div>
 
-<!-- Screen 2 -->
-<div class="screen" id="s2">
-<div class="card">
-<h2>Pick any number</h2>
-<div class="numbers">
-<div class="num" onclick="pick(1)">26</div>
-<div class="num" onclick="pick(3)">1</div>
-<div class="num" onclick="pick(7)">10</div>
-</div>
-<p id="msg" style="margin-top:15px"></p>
-<button id="retry" style="display:none" onclick="resetPick()">Retry</button>
-</div>
-</div>
-
-<!-- Screen 3 -->
-<div class="screen" id="s3">
-<div id="cakeArea">
-<img src="cake.png" id="cake">
-<img src="knife.png" id="knife">
-</div>
-</div>
-
-<!-- Screen 4 -->
-<div class="screen" id="s4">
-<div class="card">
-<h2>Happy Birthday!!!</h2>
-<p style="margin-top:12px">
-May Bappa brings joy, success and bless throughout the year.<br>
-Be the way u are, and always make everyone proud of u!
-</p>
-<p style="margin-top:10px">
-Stay smiling. Stay connected.
-</p>
-</div>
+<!-- Video Section -->
+<div class="container" id="videoContainer">
+    <video id="birthdayVideo">
+        <source src="video.mp4" type="video/mp4">
+        Your browser does not support video.
+    </video>
+    <br>
+    <button id="replayBtn">Replay 🎥</button>
 </div>
 
 <script>
-function go(id){
-    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-}
+function checkNumber(num) {
+    const game = document.getElementById("numberGame");
 
-function pick(n){
-    const msg=document.getElementById("msg");
-    const retry=document.getElementById("retry");
-    if(n===3){
-        msg.innerText="Haa saeee";
-        setTimeout(()=>go('s3'),800);
-    }else{
-        msg.innerText="Khalles? Ha nvta g, ajun ekda try kr!";
-        retry.style.display="inline-block";
+    if (num === 16) {
+        game.classList.add("fade-out");
+
+        setTimeout(() => {
+            game.style.display = "none";
+
+            const videoContainer = document.getElementById("videoContainer");
+            videoContainer.style.display = "block";
+            videoContainer.classList.add("fade-in");
+
+            const video = document.getElementById("birthdayVideo");
+            video.play();
+        }, 1000);
+
+    } else {
+        game.classList.add("shake");
+        setTimeout(() => game.classList.remove("shake"), 400);
     }
 }
-function resetPick(){
-    document.getElementById("msg").innerText="";
-    document.getElementById("retry").style.display="none";
-}
 
-/* Knife game */
-const knife=document.getElementById("knife");
-const cake=document.getElementById("cake");
-let dragging=false;
+const video = document.getElementById("birthdayVideo");
+const replayBtn = document.getElementById("replayBtn");
 
-knife.addEventListener("pointerdown",()=>dragging=true);
-document.addEventListener("pointerup",()=>dragging=false);
-document.addEventListener("pointermove",e=>{
-    if(!dragging) return;
-    knife.style.left=e.clientX+"px";
-    knife.style.top=e.clientY+"px";
-    checkCut();
+video.addEventListener("ended", function() {
+    replayBtn.style.display = "inline-block";
 });
 
-function checkCut(){
-    const k=knife.getBoundingClientRect();
-    const c=cake.getBoundingClientRect();
-    if(k.bottom>c.top+40){
-        slice();
-        dragging=false;
-    }
-}
-
-function slice(){
-    crumbs();
-    confetti();
-    setTimeout(()=>go('s4'),900);
-}
-
-function crumbs(){
-    const r=cake.getBoundingClientRect();
-    for(let i=0;i<12;i++){
-        const d=document.createElement("div");
-        d.className="crumb";
-        d.style.left=r.left+r.width/2+"px";
-        d.style.top=r.top+r.height/2+"px";
-        d.style.setProperty("--x",(Math.random()*120-60)+"px");
-        d.style.setProperty("--y",(Math.random()*80+20)+"px");
-        document.body.appendChild(d);
-        setTimeout(()=>d.remove(),700);
-    }
-}
-
-function confetti(){
-    for(let i=0;i<40;i++){
-        const c=document.createElement("div");
-        c.className="confetti";
-        c.style.left=Math.random()*100+"vw";
-        c.style.top="-10px";
-        c.style.setProperty("--h",Math.random()*360);
-        document.body.appendChild(c);
-        setTimeout(()=>c.remove(),1200);
-    }
-}
+replayBtn.addEventListener("click", function() {
+    video.currentTime = 0;
+    video.play();
+    replayBtn.style.display = "none";
+});
 </script>
 
 </body>
-
 </html>
