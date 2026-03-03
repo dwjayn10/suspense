@@ -22,7 +22,7 @@ body {
     overflow: hidden;
 }
 
-/* Dark cinematic overlay */
+/* Overlay */
 .overlay {
     position: absolute;
     width: 100%;
@@ -30,7 +30,7 @@ body {
     background: rgba(0,0,0,0.65);
 }
 
-/* Container */
+/* Common container */
 .container {
     position: relative;
     z-index: 2;
@@ -45,11 +45,11 @@ h1 {
     letter-spacing: 2px;
 }
 
-/* Number buttons */
-.number-btn {
+/* Buttons */
+.btn {
     padding: 15px 28px;
     margin: 10px;
-    font-size: 22px;
+    font-size: 20px;
     border: none;
     border-radius: 12px;
     background: white;
@@ -58,12 +58,17 @@ h1 {
     transition: 0.3s ease;
 }
 
-.number-btn:hover {
+.btn:hover {
     transform: scale(1.1);
     background: #ffccd5;
 }
 
-/* Shake animation for wrong choice */
+/* Hidden sections */
+.hidden {
+    display: none;
+}
+
+/* Shake for wrong number */
 .shake {
     animation: shake 0.4s;
 }
@@ -94,11 +99,7 @@ h1 {
     to { opacity: 1; }
 }
 
-/* Video Section */
-#videoContainer {
-    display: none;
-}
-
+/* Video styling */
 video {
     width: 85vw;
     max-width: 750px;
@@ -106,23 +107,9 @@ video {
     box-shadow: 0 0 25px rgba(255,255,255,0.2);
 }
 
-/* Replay Button */
 #replayBtn {
     margin-top: 20px;
-    padding: 12px 25px;
-    font-size: 18px;
-    border: none;
-    border-radius: 10px;
-    background: white;
-    color: black;
-    cursor: pointer;
     display: none;
-    transition: 0.3s ease;
-}
-
-#replayBtn:hover {
-    background: #ffccd5;
-    transform: scale(1.05);
 }
 </style>
 </head>
@@ -131,25 +118,42 @@ video {
 
 <div class="overlay"></div>
 
-<!-- Number Game -->
-<div class="container" id="numberGame">
-    <h1>Pick a Number</h1>
-    <button class="number-btn" onclick="checkNumber(10)">10</button>
-    <button class="number-btn" onclick="checkNumber(16)">16</button>
-    <button class="number-btn" onclick="checkNumber(22)">22</button>
+<!-- 1️⃣ Intro Page -->
+<div class="container" id="introPage">
+    <h1>Something Special Awaits...</h1>
+    <button class="btn" onclick="goToNumbers()">Continue</button>
 </div>
 
-<!-- Video Section -->
-<div class="container" id="videoContainer">
+<!-- 2️⃣ Number Game -->
+<div class="container hidden" id="numberGame">
+    <h1>Pick a Number</h1>
+    <button class="btn" onclick="checkNumber(10)">10</button>
+    <button class="btn" onclick="checkNumber(16)">16</button>
+    <button class="btn" onclick="checkNumber(22)">22</button>
+</div>
+
+<!-- 3️⃣ Video Section -->
+<div class="container hidden" id="videoContainer">
     <video id="birthdayVideo">
         <source src="video.mp4" type="video/mp4">
-        Your browser does not support video.
     </video>
     <br>
-    <button id="replayBtn">Replay 🎥</button>
+    <button class="btn" id="replayBtn">Replay 🎥</button>
 </div>
 
 <script>
+function goToNumbers() {
+    const intro = document.getElementById("introPage");
+    intro.classList.add("fade-out");
+
+    setTimeout(() => {
+        intro.classList.add("hidden");
+        const numbers = document.getElementById("numberGame");
+        numbers.classList.remove("hidden");
+        numbers.classList.add("fade-in");
+    }, 1000);
+}
+
 function checkNumber(num) {
     const game = document.getElementById("numberGame");
 
@@ -157,10 +161,10 @@ function checkNumber(num) {
         game.classList.add("fade-out");
 
         setTimeout(() => {
-            game.style.display = "none";
+            game.classList.add("hidden");
 
             const videoContainer = document.getElementById("videoContainer");
-            videoContainer.style.display = "block";
+            videoContainer.classList.remove("hidden");
             videoContainer.classList.add("fade-in");
 
             const video = document.getElementById("birthdayVideo");
@@ -188,4 +192,4 @@ replayBtn.addEventListener("click", function() {
 </script>
 
 </body>
-</html>
+    </html>
