@@ -3,194 +3,176 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Birthday Surprise</title>
+<title>Birthday Surprise 🎂</title>
 
 <style>
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
+body{
+  margin:0;
+  font-family:Arial, Helvetica, sans-serif;
+  text-align:center;
+  background:url("bg.jpg") no-repeat center center fixed;
+  background-size:cover;
+  color:white;
+  overflow:hidden;
 }
 
-body {
-    height: 100vh;
-    background: url('bg.jpg') no-repeat center center/cover;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
+.screen{
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  backdrop-filter:brightness(0.7);
 }
 
-/* Overlay */
-.overlay {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.65);
+.hidden{
+  display:none;
 }
 
-/* Common container */
-.container {
-    position: relative;
-    z-index: 2;
-    text-align: center;
-    color: white;
+h1{
+  font-size:2.5rem;
+  margin-bottom:20px;
 }
 
-/* Title */
-h1 {
-    margin-bottom: 20px;
-    font-weight: 500;
-    letter-spacing: 2px;
+button{
+  padding:12px 25px;
+  font-size:1.2rem;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  transition:0.3s;
 }
 
-/* Buttons */
-.btn {
-    padding: 15px 28px;
-    margin: 10px;
-    font-size: 20px;
-    border: none;
-    border-radius: 12px;
-    background: white;
-    color: black;
-    cursor: pointer;
-    transition: 0.3s ease;
+button:hover{
+  transform:scale(1.1);
 }
 
-.btn:hover {
-    transform: scale(1.1);
-    background: #ffccd5;
+.number-btn{
+  margin:10px;
+  width:80px;
+  height:80px;
+  font-size:1.8rem;
+  border-radius:50%;
 }
 
-/* Hidden sections */
-.hidden {
-    display: none;
+.fade-in{
+  animation:fadeIn 0.6s ease forwards;
 }
 
-/* Shake for wrong number */
-.shake {
-    animation: shake 0.4s;
+@keyframes fadeIn{
+  from{opacity:0; transform:scale(0.96);}
+  to{opacity:1; transform:scale(1);}
 }
 
-@keyframes shake {
-    0% { transform: translateX(0); }
-    25% { transform: translateX(-8px); }
-    50% { transform: translateX(8px); }
-    75% { transform: translateX(-8px); }
-    100% { transform: translateX(0); }
+.glow{
+  box-shadow:0 0 25px gold;
+  transform:scale(1.15);
 }
 
-/* Fade animations */
-.fade-out {
-    animation: fadeOut 1s forwards;
-}
-
-@keyframes fadeOut {
-    to { opacity: 0; visibility: hidden; }
-}
-
-.fade-in {
-    animation: fadeIn 1.5s forwards;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-/* Video styling */
-video {
-    width: 85vw;
-    max-width: 750px;
-    border-radius: 18px;
-    box-shadow: 0 0 25px rgba(255,255,255,0.2);
-}
-
-#replayBtn {
-    margin-top: 20px;
-    display: none;
+.message{
+  font-size:1.2rem;
+  margin-bottom:15px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="overlay"></div>
-
-<!-- 1️⃣ Intro Page -->
-<div class="container" id="introPage">
-    <h1>Yoo, story sathi template bhetli nhi mhanun😭😅</h1>
-    <button class="btn" onclick="goToNumbers()">Chutta nhi hai, aage badh🤟🏽🤟🏽</button>
+<!-- INTRO SCREEN -->
+<div id="intro" class="screen">
+  <h1>Yooo, story lavtaa nhi aali mhanun...</h1>
+  <p>Pick the number that holds the magic...</p>
+  <button onclick="goToGame()">Chalo</button>
 </div>
 
-<!-- 2️⃣ Number Game -->
-<div class="container hidden" id="numberGame">
-    <h1>What's ur Birthdate?</h1>
-    <button class="btn" onclick="checkNumber(10)">10</button>
-    <button class="btn" onclick="checkNumber(16)">16</button>
-    <button class="btn" onclick="checkNumber(22)">22</button>
+<!-- GAME SCREEN -->
+<div id="game" class="screen hidden">
+  <h1>Choose wiselyyy</h1>
+  <div>
+    <button class="number-btn" onclick="checkNumber(16)">16</button>
+    <button class="number-btn" onclick="checkNumber(3)">3</button>
+    <button class="number-btn" onclick="checkNumber(10)">10</button>
+  </div>
 </div>
 
-<!-- 3️⃣ Video Section -->
-<div class="container hidden" id="videoContainer">
-    <video id="birthdayVideo">
-        <source src="video.mp4" type="video/mp4">
-    </video>
-    <br>
-    <button class="btn" id="replayBtn">Vaishnavi Khush Huyiii!</button>
+<!-- WRONG SCREEN -->
+<div id="wrong" class="screen hidden">
+  <h1 id="wrongText">Khallessss? Ha nvtaa yrr</h1>
+  <button onclick="retry()">Ajun ekdaa</button>
+</div>
+
+<!-- VIDEO SCREEN -->
+<div id="videoScreen" class="screen hidden">
+  <h1>🎂 Happy Birthday 🎂</h1>
+  <video id="birthdayVideo" width="320" controls>
+    <source src="video.mp4" type="video/mp4">
+  </video>
+  <br><br>
+  <button id="replayBtn" class="hidden" onclick="replayVideo()">Vaishnavi Khush Huyee✨</button>
 </div>
 
 <script>
-function goToNumbers() {
-    const intro = document.getElementById("introPage");
-    intro.classList.add("fade-out");
-
-    setTimeout(() => {
-        intro.classList.add("hidden");
-        const numbers = document.getElementById("numberGame");
-        numbers.classList.remove("hidden");
-        numbers.classList.add("fade-in");
-    }, 1000);
-}
-
-function checkNumber(num) {
-    const game = document.getElementById("numberGame");
-
-    if (num === 16) {
-        game.classList.add("fade-out");
-
-        setTimeout(() => {
-            game.classList.add("hidden");
-
-            const videoContainer = document.getElementById("videoContainer");
-            videoContainer.classList.remove("hidden");
-            videoContainer.classList.add("fade-in");
-
-            const video = document.getElementById("birthdayVideo");
-            video.play();
-        }, 1000);
-
-    } else {
-        game.classList.add("shake");
-        setTimeout(() => game.classList.remove("shake"), 400);
-    }
-}
-
+const intro = document.getElementById("intro");
+const game = document.getElementById("game");
+const wrong = document.getElementById("wrong");
+const videoScreen = document.getElementById("videoScreen");
 const video = document.getElementById("birthdayVideo");
 const replayBtn = document.getElementById("replayBtn");
+const wrongText = document.getElementById("wrongText");
 
-video.addEventListener("ended", function() {
-    replayBtn.style.display = "inline-block";
+const wrongMessages = [
+  "Ajun ek wrong decision in life!",
+  "So close yet so far!",
+  "Nice guess 🎯 but not the magical spark!",
+  "Not quite 🎈 Try listening to your heart."
+];
+
+function switchScreen(from, to){
+  from.classList.add("hidden");
+  to.classList.remove("hidden");
+  to.classList.add("fade-in");
+}
+
+function goToGame(){
+  switchScreen(intro, game);
+}
+
+function checkNumber(num){
+  if(num === 16){
+
+    const buttons = document.querySelectorAll(".number-btn");
+    buttons.forEach(btn=>{
+      if(parseInt(btn.innerText) === 16){
+        btn.classList.add("glow");
+      }
+    });
+
+    setTimeout(()=>{
+      switchScreen(game, videoScreen);
+      video.play();
+    }, 700);
+
+  }else{
+    const msg = wrongMessages[Math.floor(Math.random() * wrongMessages.length)];
+    wrongText.innerHTML = `Areh🤦🏽<br>${msg}`;
+    switchScreen(game, wrong);
+  }
+}
+
+function retry(){
+  switchScreen(wrong, game);
+}
+
+video.addEventListener("ended", function(){
+  replayBtn.classList.remove("hidden");
 });
 
-replayBtn.addEventListener("click", function() {
-    video.currentTime = 0;
-    video.play();
-    replayBtn.style.display = "none";
-});
+function replayVideo(){
+  replayBtn.classList.add("hidden");
+  video.currentTime = 0;
+  video.play();
+}
 </script>
 
 </body>
 </html>
-
